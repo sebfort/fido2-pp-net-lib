@@ -135,7 +135,7 @@ public class PushpayController: Controller
 
     [HttpPost]
     [Route("assertionOptions")]
-    public ActionResult AssertionOptionsPost([FromForm] string username, [FromForm] string userVerification)
+    public ActionResult AssertionOptionsPost([FromForm] string username)
     {
         try
         {
@@ -155,11 +155,10 @@ public class PushpayController: Controller
                 UserVerificationMethod = true
             };
 
-            // 3. Create options
-            var uv = string.IsNullOrEmpty(userVerification) ? UserVerificationRequirement.Discouraged : userVerification.ToEnum<UserVerificationRequirement>();
+            // 3. Create options            
             var options = _fido2.GetAssertionOptions(
                 existingCredentials,
-                uv,
+                UserVerificationRequirement.Required,
                 exts
             );
 
