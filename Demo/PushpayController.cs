@@ -34,7 +34,7 @@ public class PushpayController: Controller
     }
 
     [HttpPost]
-    [Route("/makeCredentialOptions2")]
+    [Route("makeCredentialOptions")]
     public JsonResult MakeCredentialOptions([FromForm] string username, [FromForm] string displayName)
     {
         try
@@ -87,7 +87,7 @@ public class PushpayController: Controller
     }
 
     [HttpPost]
-    [Route("/makeCredential2")]
+    [Route("makeCredential")]
     public async Task<JsonResult> MakeCredential([FromBody] AuthenticatorAttestationRawResponse attestationResponse, [FromHeader] string attestationOptions,  CancellationToken cancellationToken)
     {
         try
@@ -134,7 +134,7 @@ public class PushpayController: Controller
     }
 
     [HttpPost]
-    [Route("/assertionOptions")]
+    [Route("assertionOptions")]
     public ActionResult AssertionOptionsPost([FromForm] string username, [FromForm] string userVerification)
     {
         try
@@ -164,7 +164,7 @@ public class PushpayController: Controller
             );
 
             // 4. Temporarily store options, session/in-memory cache/redis/db
-            HttpContext.Session.SetString("fido2.assertionOptions", options.ToJson());
+            //HttpContext.Session.SetString("fido2.assertionOptions", options.ToJson());
 
             // 5. Return options to client
             return Json(options);
@@ -177,14 +177,14 @@ public class PushpayController: Controller
     }
 
     [HttpPost]
-    [Route("/makeAssertion")]
-    public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken)
+    [Route("makeAssertion")]
+    public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse, [FromHeader] string assertionOptions, CancellationToken cancellationToken)
     {
         try
         {
             // 1. Get the assertion options we sent the client
-            var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
-            var options = AssertionOptions.FromJson(jsonOptions);
+            //var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
+            var options = AssertionOptions.FromJson(assertionOptions);
 
             // 2. Get registered credential from database
             var creds = DemoStorage.GetCredentialById(clientResponse.Id) ?? throw new Exception("Unknown credentials");
